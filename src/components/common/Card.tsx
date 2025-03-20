@@ -7,9 +7,18 @@ interface CardProps {
   className?: string;
   hoverable?: boolean;
   glass?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
-const Card = ({ children, className, hoverable = false, glass = false }: CardProps) => {
+const Card = ({ 
+  children, 
+  className, 
+  hoverable = false, 
+  glass = false,
+  onMouseEnter,
+  onMouseLeave
+}: CardProps) => {
   return (
     <div
       className={cn(
@@ -18,6 +27,8 @@ const Card = ({ children, className, hoverable = false, glass = false }: CardPro
         glass && "glass-morphism",
         className
       )}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </div>

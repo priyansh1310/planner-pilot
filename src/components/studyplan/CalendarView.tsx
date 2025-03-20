@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../common/Card';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-react';
@@ -11,6 +11,7 @@ interface CalendarEvent {
   duration: string;
   difficulty: 'easy' | 'medium' | 'hard';
   isComplete?: boolean;
+  examType?: string;
 }
 
 interface CalendarDay {
@@ -22,9 +23,10 @@ interface CalendarDay {
 
 interface CalendarViewProps {
   className?: string;
+  studyPlan?: any; // This would be properly typed in a real application
 }
 
-const CalendarView = ({ className }: CalendarViewProps) => {
+const CalendarView = ({ className, studyPlan }: CalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
@@ -59,40 +61,59 @@ const CalendarView = ({ className }: CalendarViewProps) => {
       });
     }
     
-    // Days from current month
+    // Days from current month - PCMB focused study sessions
+    const pcmbSubjects = ["Physics", "Chemistry", "Mathematics", "Biology"];
+    const difficulties = ["easy", "medium", "hard"] as const;
+    
     for (let i = 1; i <= lastDay; i++) {
       const isToday = i === today.getDate() && 
                       currentMonth === today.getMonth() && 
                       currentYear === today.getFullYear();
       
-      // Sample events - in a real app, these would come from your state or API
+      // Generate PCMB study sessions
       const events: CalendarEvent[] = [];
-      if (i % 3 === 0) {
+      
+      // Create dynamic study sessions based on day patterns
+      if (i % 2 === 0) { // Even days
         events.push({
           id: `event-${i}-1`,
-          title: 'Mathematics',
-          time: '10:00 AM',
-          duration: '45 min',
-          difficulty: 'medium'
+          title: 'Physics',
+          time: '9:00 AM',
+          duration: '90 min',
+          difficulty: 'medium',
+          examType: 'JEE Mains'
         });
-      }
-      if (i % 5 === 0) {
+        
         events.push({
           id: `event-${i}-2`,
-          title: 'Physics',
-          time: '2:00 PM',
-          duration: '30 min',
-          difficulty: 'hard'
+          title: 'Mathematics',
+          time: '11:30 AM',
+          duration: '90 min',
+          difficulty: 'hard',
+          examType: 'JEE Mains'
         });
       }
-      if (i % 7 === 0) {
+      
+      if (i % 3 === 0) { // Every third day
         events.push({
           id: `event-${i}-3`,
-          title: 'Literature',
-          time: '4:30 PM',
+          title: 'Chemistry',
+          time: '2:00 PM',
           duration: '60 min',
+          difficulty: 'medium',
+          examType: 'JEE Mains'
+        });
+      }
+      
+      if (i % 4 === 0) { // Every fourth day
+        events.push({
+          id: `event-${i}-4`,
+          title: 'Biology',
+          time: '4:30 PM',
+          duration: '75 min',
           difficulty: 'easy',
-          isComplete: true
+          examType: 'NEET',
+          isComplete: i < today.getDate() && currentMonth === today.getMonth()
         });
       }
       
@@ -148,7 +169,7 @@ const CalendarView = ({ className }: CalendarViewProps) => {
     <div className={cn("space-y-6", className)}>
       <Card className="p-0 overflow-hidden">
         <div className="p-4 bg-primary/5 border-b flex items-center justify-between">
-          <h3 className="font-medium">Study Calendar</h3>
+          <h3 className="font-medium">PCMB Study Calendar</h3>
           <div className="flex items-center space-x-1">
             <button 
               onClick={() => navigateMonth('prev')}
@@ -225,7 +246,7 @@ const CalendarView = ({ className }: CalendarViewProps) => {
       {selectedDay && selectedDay.events.length > 0 && (
         <Card className="space-y-4 animate-fade-in">
           <h3 className="font-medium">
-            Study Sessions for {monthNames[currentMonth]} {selectedDay.date}
+            PCMB Study Sessions for {monthNames[currentMonth]} {selectedDay.date}
           </h3>
           
           <div className="space-y-3">
@@ -246,14 +267,21 @@ const CalendarView = ({ className }: CalendarViewProps) => {
                       </span>
                     )}
                   </h4>
-                  <span 
-                    className={cn(
-                      "text-xs px-2 py-0.5 rounded-full",
-                      difficultyStyles[event.difficulty]
+                  <div className="flex items-center space-x-2">
+                    {event.examType && (
+                      <span className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                        {event.examType}
+                      </span>
                     )}
-                  >
-                    {event.difficulty}
-                  </span>
+                    <span 
+                      className={cn(
+                        "text-xs px-2 py-0.5 rounded-full",
+                        difficultyStyles[event.difficulty]
+                      )}
+                    >
+                      {event.difficulty}
+                    </span>
+                  </div>
                 </div>
                 
                 <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">

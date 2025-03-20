@@ -1,10 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
@@ -22,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CheckCircle2, Brain, Clock, Target, Trophy } from 'lucide-react';
+import { CheckCircle2, Brain, Clock, Target } from 'lucide-react';
 import Card from '../common/Card';
 
 type FormValues = {
@@ -30,7 +29,7 @@ type FormValues = {
   hoursPerDay: number;
   weakSubjects: string[];
   targetScore: number;
-  isJeeNeet: boolean;
+  examType: string;
   examDate: string;
 }
 
@@ -38,9 +37,14 @@ const StudyPlanGenerator = () => {
   const { toast } = useToast();
   const [generatedPlan, setGeneratedPlan] = useState<boolean>(false);
   
+  // PCMB entrance exam focused subjects
   const subjects = [
-    "Mathematics", "Physics", "Chemistry", "Biology", 
-    "English", "Computer Science", "History", "Geography"
+    "Physics", "Chemistry", "Mathematics", "Biology"
+  ];
+  
+  // Entrance exam types
+  const examTypes = [
+    "JEE Mains", "JEE Advanced", "NEET", "MHT-CET"
   ];
   
   const form = useForm<FormValues>({
@@ -49,7 +53,7 @@ const StudyPlanGenerator = () => {
       hoursPerDay: 4,
       weakSubjects: [],
       targetScore: 80,
-      isJeeNeet: false,
+      examType: "",
       examDate: ""
     }
   });
@@ -68,7 +72,7 @@ const StudyPlanGenerator = () => {
       <Card className="p-6">
         <div className="mb-6">
           <h2 className="text-xl font-bold mb-2">Personalized Study Plan Generator</h2>
-          <p className="text-muted-foreground">Create a customized study plan based on your preferences and goals</p>
+          <p className="text-muted-foreground">Create a customized PCMB entrance exam study plan based on your preferences and goals</p>
         </div>
         
         <Form {...form}>
@@ -114,7 +118,7 @@ const StudyPlanGenerator = () => {
                       ))}
                     </div>
                     <FormDescription>
-                      Select the subjects you want to focus on
+                      Select the PCMB subjects you want to focus on
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -242,21 +246,31 @@ const StudyPlanGenerator = () => {
               
               <FormField
                 control={form.control}
-                name="isJeeNeet"
+                name="examType"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">JEE/NEET Focused</FormLabel>
-                      <FormDescription>
-                        Optimize study plan for JEE/NEET preparation
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
+                  <FormItem>
+                    <FormLabel>Target Entrance Exam</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select entrance exam" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {examTypes.map((examType) => (
+                          <SelectItem key={examType} value={examType}>
+                            {examType}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Select your target entrance examination
+                    </FormDescription>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -282,7 +296,7 @@ const StudyPlanGenerator = () => {
               <Brain className="h-5 w-5 text-primary mt-0.5" />
               <div>
                 <h3 className="font-medium">Focus Areas</h3>
-                <p className="text-sm text-muted-foreground">Mathematics, Physics, Chemistry</p>
+                <p className="text-sm text-muted-foreground">Physics, Chemistry, Mathematics</p>
               </div>
             </div>
             

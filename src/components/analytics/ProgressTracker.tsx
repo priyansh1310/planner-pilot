@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Card from '../common/Card';
 import { cn } from '@/lib/utils';
 import { BarChart, LineChart, AreaChart, Area, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -10,6 +10,8 @@ interface ProgressTrackerProps {
 }
 
 const ProgressTracker = ({ className }: ProgressTrackerProps) => {
+  const [activeChart, setActiveChart] = useState<string | null>(null);
+  
   // Sample data for charts
   const weeklyStudyData = [
     { day: 'Mon', hours: 2.5 },
@@ -59,11 +61,23 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
     }
   ];
 
+  const chartColors = {
+    bar: 'rgba(59, 130, 246, 0.8)',
+    barHover: 'rgba(30, 64, 175, 0.9)',
+    area: 'rgba(59, 130, 246, 0.8)',
+    areaHover: 'rgba(30, 64, 175, 0.9)',
+  };
+
   return (
     <div className={cn("space-y-6", className)}>
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Study Hours Chart */}
-        <Card className="p-6">
+        <Card 
+          className="p-6 transition-all duration-300" 
+          hoverable
+          onMouseEnter={() => setActiveChart('studyHours')}
+          onMouseLeave={() => setActiveChart(null)}
+        >
           <div className="mb-4 flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="font-medium">Weekly Study Hours</h3>
@@ -88,14 +102,23 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
                   itemStyle={{ color: '#3B82F6' }}
                   formatter={(value) => [`${value} hrs`, 'Study Time']}
                 />
-                <Bar dataKey="hours" fill="rgba(59, 130, 246, 0.8)" radius={[4, 4, 0, 0]} />
+                <Bar 
+                  dataKey="hours" 
+                  fill={activeChart === 'studyHours' ? chartColors.barHover : chartColors.bar} 
+                  radius={[4, 4, 0, 0]} 
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
         
         {/* Performance Trend */}
-        <Card className="p-6">
+        <Card 
+          className="p-6 transition-all duration-300" 
+          hoverable
+          onMouseEnter={() => setActiveChart('performance')}
+          onMouseLeave={() => setActiveChart(null)}
+        >
           <div className="mb-4 flex items-center justify-between">
             <div className="space-y-1">
               <h3 className="font-medium">Performance Trend</h3>
@@ -109,8 +132,8 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
               <AreaChart data={performanceTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="rgba(59, 130, 246, 0.8)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="rgba(59, 130, 246, 0.1)" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor={activeChart === 'performance' ? chartColors.areaHover : chartColors.area} stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor={activeChart === 'performance' ? chartColors.areaHover : chartColors.area} stopOpacity={0.1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.1)" />
@@ -129,7 +152,7 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
                 <Area 
                   type="monotone" 
                   dataKey="score" 
-                  stroke="rgba(59, 130, 246, 0.8)" 
+                  stroke={activeChart === 'performance' ? chartColors.areaHover : chartColors.area} 
                   fillOpacity={1} 
                   fill="url(#colorScore)" 
                 />
@@ -140,7 +163,12 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
       </div>
       
       {/* Subject Progress */}
-      <Card className="p-6">
+      <Card 
+        className="p-6 transition-all duration-300" 
+        hoverable
+        onMouseEnter={() => setActiveChart('subjects')}
+        onMouseLeave={() => setActiveChart(null)}
+      >
         <div className="mb-6 flex items-center justify-between">
           <div className="space-y-1">
             <h3 className="font-medium">Subject Progress</h3>
@@ -169,7 +197,10 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
               />
               <Bar dataKey="progress" radius={[0, 4, 4, 0]}>
                 {subjectProgressData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={activeChart === 'subjects' ? '#1e3a8a' : entry.color} 
+                  />
                 ))}
               </Bar>
             </BarChart>
@@ -180,7 +211,7 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
       {/* AI Insights */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
         {insightItems.map((item) => (
-          <Card key={item.id} className="p-6 space-y-3" hoverable>
+          <Card key={item.id} className="p-6 space-y-3 transition-all duration-300" hoverable>
             <div className="flex items-center space-x-2">
               {item.icon}
               <h3 className="font-medium">{item.title}</h3>

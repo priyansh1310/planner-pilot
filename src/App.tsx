@@ -8,8 +8,11 @@ import Index from "./pages/Index";
 import StudyPlanPage from "./pages/StudyPlanPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AchievementsPage from "./pages/AchievementsPage";
+import LearningPage from "./pages/LearningPage";
+import TestsPage from "./pages/TestsPage";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
+import NotificationPanel from "@/components/ui/NotificationPanel";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,8 @@ const App = () => {
             <Route path="/study-plan" element={<StudyPlanPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/learning" element={<LearningPage />} />
+            <Route path="/tests" element={<TestsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

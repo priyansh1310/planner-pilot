@@ -10,7 +10,9 @@ import {
   X, 
   Bell,
   Moon,
-  Sun
+  Sun,
+  BookOpenCheck,
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -18,6 +20,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(true);
+  const [isNotificationPanelOpen, setNotificationPanelOpen] = useState(false);
   const location = useLocation();
   
   const toggleDarkMode = () => {
@@ -32,6 +35,8 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <BookOpen className="w-5 h-5" /> },
     { path: '/study-plan', label: 'Study Plan', icon: <Calendar className="w-5 h-5" /> },
+    { path: '/learning', label: 'Start Learning', icon: <BookOpenCheck className="w-5 h-5" /> },
+    { path: '/tests', label: 'Tests', icon: <FileText className="w-5 h-5" /> },
     { path: '/analytics', label: 'Analytics', icon: <BarChart2 className="w-5 h-5" /> },
     { path: '/achievements', label: 'Achievements', icon: <Award className="w-5 h-5" /> },
   ];
@@ -68,6 +73,7 @@ const Header = () => {
           <button 
             className="relative rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
             aria-label="Notifications"
+            onClick={() => setNotificationPanelOpen(true)}
           >
             <Bell className="h-5 w-5" />
             {hasNotifications && (

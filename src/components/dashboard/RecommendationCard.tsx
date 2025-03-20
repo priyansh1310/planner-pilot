@@ -3,6 +3,7 @@ import React from 'react';
 import { ArrowRight, Clock, Bookmark } from 'lucide-react';
 import Card from '../common/Card';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface RecommendationCardProps {
   title: string;
@@ -27,7 +28,7 @@ const RecommendationCard = ({
   
   return (
     <Card 
-      className={cn("overflow-hidden", className)} 
+      className={cn("overflow-hidden group", className)} 
       hoverable
     >
       <div className="mb-4 flex justify-between items-start">
@@ -47,10 +48,13 @@ const RecommendationCard = ({
           <Clock className="h-4 w-4" />
           <span>{duration}</span>
         </div>
-        <button className="inline-flex items-center space-x-1 text-sm font-medium text-primary transition-colors hover:text-primary-light">
+        <Link 
+          to={`/learning?topic=${encodeURIComponent(title)}`} 
+          className="inline-flex items-center space-x-1 text-sm font-medium text-primary transition-colors hover:text-primary-light"
+        >
           <span>Start learning</span>
-          <ArrowRight className="h-4 w-4" />
-        </button>
+          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+        </Link>
       </div>
     </Card>
   );

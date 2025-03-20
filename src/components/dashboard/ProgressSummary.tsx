@@ -3,6 +3,7 @@ import React from 'react';
 import { BarChart2, ArrowUpRight, Clock } from 'lucide-react';
 import Card from '../common/Card';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface ProgressSummaryProps {
   totalStudyHours: number;
@@ -22,10 +23,12 @@ const ProgressSummary = ({
   const progressPercentage = Math.round((completedTopics / totalTopics) * 100);
   
   return (
-    <Card className={cn("space-y-4", className)}>
+    <Card className={cn("space-y-4 transition-all", className)}>
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">Your Progress</h3>
-        <BarChart2 className="h-5 w-5 text-muted-foreground" />
+        <Link to="/analytics">
+          <BarChart2 className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
+        </Link>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
@@ -59,17 +62,19 @@ const ProgressSummary = ({
       </div>
       
       <div className="flex items-center text-sm">
-        <span className={cn(
-          "flex items-center font-medium",
-          weeklyChange >= 0 ? "text-green-500" : "text-red-500"
-        )}>
-          <ArrowUpRight className={cn(
-            "h-4 w-4 mr-1",
-            weeklyChange < 0 && "rotate-180"
-          )} />
-          {Math.abs(weeklyChange)}% 
-        </span>
-        <span className="ml-1 text-muted-foreground">from last week</span>
+        <Link to="/analytics" className="flex items-center w-full">
+          <span className={cn(
+            "flex items-center font-medium",
+            weeklyChange >= 0 ? "text-green-500" : "text-red-500"
+          )}>
+            <ArrowUpRight className={cn(
+              "h-4 w-4 mr-1",
+              weeklyChange < 0 && "rotate-180"
+            )} />
+            {Math.abs(weeklyChange)}% 
+          </span>
+          <span className="ml-1 text-muted-foreground">from last week</span>
+        </Link>
       </div>
     </Card>
   );

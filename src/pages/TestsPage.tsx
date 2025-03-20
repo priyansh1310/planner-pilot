@@ -13,12 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle, FileText, Clock, Brain, Target, BarChart3 } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { CheckCircle, FileText, Clock, Brain, Target, BarChart3, X, Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const TestsPage = () => {
   const { toast } = useToast();
   const [testCreated, setTestCreated] = useState(false);
+  const [customTopics, setCustomTopics] = useState<string[]>([]);
+  const [newTopic, setNewTopic] = useState('');
   
   // Mock test data
   const availableTests = [
@@ -47,6 +49,24 @@ const TestsPage = () => {
       tags: ['Algebra', 'Calculus']
     }
   ];
+  
+  const addTopic = () => {
+    if (newTopic.trim() !== '' && !customTopics.includes(newTopic.trim())) {
+      setCustomTopics([...customTopics, newTopic.trim()]);
+      setNewTopic('');
+    }
+  };
+  
+  const removeTopic = (topic: string) => {
+    setCustomTopics(customTopics.filter(t => t !== topic));
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTopic();
+    }
+  };
   
   const generateTest = () => {
     toast({
@@ -99,39 +119,6 @@ const TestsPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Topics</label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select topics" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Topics</SelectItem>
-                        <SelectItem value="mechanics">Mechanics</SelectItem>
-                        <SelectItem value="thermodynamics">Thermodynamics</SelectItem>
-                        <SelectItem value="optics">Optics</SelectItem>
-                        <SelectItem value="electromagnetism">Electromagnetism</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Difficulty</label>
-                    <Select defaultValue="medium">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select difficulty" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="easy">Easy</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="hard">Hard</SelectItem>
-                        <SelectItem value="mixed">Mixed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
                     <label className="text-sm font-medium">Number of Questions</label>
                     <div className="space-y-2">
                       <Slider
@@ -148,15 +135,62 @@ const TestsPage = () => {
                       </div>
                     </div>
                   </div>
-                  
+                </div>
+                
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Time Duration (minutes)</label>
-                    <Input type="number" defaultValue="30" min="5" max="120" />
+                    <label className="text-sm font-medium">Difficulty</label>
+                    <Select defaultValue="medium">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="easy">Easy</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="hard">Hard</SelectItem>
+                        <SelectItem value="mixed">Mixed</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Test Name (optional)</label>
-                    <Input placeholder="Enter a name for your test" />
+                    <label className="text-sm font-medium">Custom Topics</label>
+                    <div className="flex items-center space-x-2">
+                      <Input 
+                        placeholder="Enter topic and press enter"
+                        value={newTopic}
+                        onChange={(e) => setNewTopic(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                      />
+                      <Button 
+                        type="button"
+                        size="icon"
+                        onClick={addTopic}
+                        variant="outline"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    {customTopics.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {customTopics.map((topic, index) => (
+                          <div 
+                            key={index} 
+                            className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm flex items-center"
+                          >
+                            {topic}
+                            <button
+                              type="button"
+                              className="ml-2 hover:text-destructive"
+                              onClick={() => removeTopic(topic)}
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -184,18 +218,22 @@ const TestsPage = () => {
                   </div>
                   
                   <div className="flex items-start space-x-3">
-                    <Clock className="h-5 w-5 text-primary mt-0.5" />
+                    <Target className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <h4 className="font-medium">Duration</h4>
-                      <p className="text-sm text-muted-foreground">30 minutes</p>
+                      <h4 className="font-medium">Difficulty</h4>
+                      <p className="text-sm text-muted-foreground">Medium</p>
                     </div>
                   </div>
                   
                   <div className="flex items-start space-x-3">
                     <Brain className="h-5 w-5 text-primary mt-0.5" />
                     <div>
-                      <h4 className="font-medium">Difficulty</h4>
-                      <p className="text-sm text-muted-foreground">Medium</p>
+                      <h4 className="font-medium">Topics</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {customTopics.length > 0 
+                          ? customTopics.slice(0, 2).join(', ') + (customTopics.length > 2 ? '...' : '')
+                          : 'All topics'}
+                      </p>
                     </div>
                   </div>
                 </div>
